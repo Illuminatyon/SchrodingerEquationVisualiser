@@ -1,0 +1,15 @@
+[theme]
+# Primary accent color for interactive elements
+primaryColor = "#4B8BBE"  # Python blue
+
+# Background color for the main content area
+backgroundColor = "#0E1E3E"  # Dark blue
+
+# Background color for sidebar and most interactive widgets
+secondaryBackgroundColor = "#162B4D"  # Slightly lighter dark blue
+
+# Color used for almost all text
+textColor = "#FFFFFF"  # White text for better contrast on dark background
+
+# Font family for all text in the app, except code blocks
+font = "Computer Modern"  # Similar to LaTeX default font
