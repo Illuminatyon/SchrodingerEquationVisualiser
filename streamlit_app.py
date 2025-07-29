@@ -45,6 +45,24 @@ st.sidebar.header("Parameters")
 # Dimension selection
 dimension = st.sidebar.radio("Dimension", [1, 2], index=0)
 
+# Physics parameters
+st.sidebar.subheader("Physics Parameters")
+hbar = st.sidebar.slider("Reduced Planck Constant (ħ)", 0.1, 2.0, 1.0, 
+                         help="Value of ħ in natural units. Default is 1.0.")
+mass = st.sidebar.slider("Particle Mass", 0.1, 10.0, 1.0,
+                         help="Mass of the particle in natural units. Default is 1.0.")
+
+# Solver options
+st.sidebar.subheader("Solver Options")
+boundary = st.sidebar.selectbox("Boundary Conditions", 
+                               ["dirichlet", "periodic"], 
+                               index=0,
+                               help="'dirichlet': Wave function is zero at boundaries. 'periodic': Domain wraps around.")
+which_eigenvalues = st.sidebar.selectbox("Eigenvalue Selection", 
+                                        ["SM", "SA"], 
+                                        index=0,
+                                        help="'SM': Smallest eigenvalues in magnitude. 'SA': Smallest eigenvalues algebraically.")
+
 # Potential selection
 if dimension == 1:
     potential_options = [
@@ -80,26 +98,66 @@ potential_func = potential_functions[potential_name]
 
 # Domain parameters
 st.sidebar.subheader("Domain")
-domain_min = st.sidebar.slider("Domain Minimum", -10.0, 0.0, -5.0)
-domain_max = st.sidebar.slider("Domain Maximum", 0.0, 10.0, 5.0)
+domain_min = st.sidebar.slider("X Domain Minimum", -10.0, 0.0, -5.0)
+domain_max = st.sidebar.slider("X Domain Maximum", 0.0, 10.0, 5.0)
+
+# For 2D, allow separate Y domain settings
+if dimension == 2:
+    use_same_domain = st.sidebar.checkbox("Use same domain for Y axis", value=True)
+    if use_same_domain:
+        domain_min_y = domain_min
+        domain_max_y = domain_max
+    else:
+        domain_min_y = st.sidebar.slider("Y Domain Minimum", -10.0, 0.0, -5.0)
+        domain_max_y = st.sidebar.slider("Y Domain Maximum", 0.0, 10.0, 5.0)
 
 # Grid resolution
 if dimension == 1:
     n_points = st.sidebar.slider("Number of Grid Points", 100, 2000, 1000)
 else:  # dimension == 2
-    n_points = st.sidebar.slider("Number of Grid Points per Dimension", 50, 200, 100)
+    use_same_grid = st.sidebar.checkbox("Use same grid resolution for both axes", value=True)
+    if use_same_grid:
+        n_points = st.sidebar.slider("Number of Grid Points per Dimension", 50, 200, 100)
+        nx = ny = n_points
+    else:
+        nx = st.sidebar.slider("Number of X Grid Points", 50, 200, 100)
+        ny = st.sidebar.slider("Number of Y Grid Points", 50, 200, 100)
 
 # Number of eigenstates
 n_states = st.sidebar.slider("Number of Eigenstates", 1, 10, 6)
+
+# Visualization options
+st.sidebar.subheader("Visualization Options")
+figsize_width = st.sidebar.slider("Figure Width", 6, 20, 12)
+figsize_height = st.sidebar.slider("Figure Height", 4, 16, 8)
+figsize = (figsize_width, figsize_height)
+
+if dimension == 2:
+    colormap = st.sidebar.selectbox("Colormap", 
+                                   ["viridis", "plasma", "inferno", "magma", "cividis", 
+                                    "Blues", "Greens", "Reds", "Purples", "jet"],
+                                   index=0,
+                                   help="Colormap for 2D plots")
+    plot_type = st.sidebar.selectbox("Plot Type for Eigenfunctions", 
+                                    ["contourf", "contour", "surface"],
+                                    index=0,
+                                    help="Type of plot for 2D eigenfunctions")
 
 # Potential-specific parameters
 st.sidebar.subheader("Potential Parameters")
 
 if potential_name == "Infinite Well":
+    # Common parameters for both 1D and 2D
+    depth = st.sidebar.slider("Well Depth", 0.0, 10.0, 0.0, 
+                             help="Potential value inside the well")
+    wall_value = st.sidebar.slider("Wall Value", 1e3, 1e7, 1e6, 
+                                  format="%.1e", 
+                                  help="Potential value outside the well (should be very large)")
+    
     if dimension == 1:
         width = st.sidebar.slider("Width", 0.1, domain_max - domain_min, 5.0)
         offset = st.sidebar.slider("Offset", domain_min, domain_max, 0.0)
-        potential_params = {"width": width, "offset": offset, "depth": 0.0, "wall_value": 1e6}
+        potential_params = {"width": width, "offset": offset, "depth": depth, "wall_value": wall_value}
     else:  # dimension == 2
         width_x = st.sidebar.slider("Width X", 0.1, domain_max - domain_min, 5.0)
         width_y = st.sidebar.slider("Width Y", 0.1, domain_max - domain_min, 5.0)
@@ -108,7 +166,7 @@ if potential_name == "Infinite Well":
         potential_params = {
             "width_x": width_x, "width_y": width_y, 
             "offset_x": offset_x, "offset_y": offset_y, 
-            "depth": 0.0, "wall_value": 1e6
+            "depth": depth, "wall_value": wall_value
         }
 
 elif potential_name == "Harmonic Oscillator":
@@ -165,9 +223,14 @@ elif potential_name == "Circular Well":
     radius = st.sidebar.slider("Radius", 0.1, (domain_max - domain_min)/2, 2.0)
     center_x = st.sidebar.slider("Center X", domain_min, domain_max, 0.0)
     center_y = st.sidebar.slider("Center Y", domain_min, domain_max, 0.0)
+    depth = st.sidebar.slider("Well Depth", 0.0, 10.0, 0.0, 
+                             help="Potential value inside the well")
+    wall_value = st.sidebar.slider("Wall Value", 1e3, 1e7, 1e6, 
+                                  format="%.1e", 
+                                  help="Potential value outside the well (should be very large)")
     potential_params = {
         "radius": radius, "center_x": center_x, "center_y": center_y, 
-        "depth": 0.0, "wall_value": 1e6
+        "depth": depth, "wall_value": wall_value
     }
 
 # Time evolution parameters
@@ -177,6 +240,17 @@ animate = st.sidebar.checkbox("Animate Time Evolution", value=False)
 if animate:
     t_max = st.sidebar.slider("Maximum Time", 1.0, 50.0, 10.0)
     n_steps = st.sidebar.slider("Number of Time Steps", 50, 200, 100)
+    
+    # Animation options
+    st.sidebar.subheader("Animation Options")
+    animation_interval = st.sidebar.slider("Frame Interval (ms)", 10, 500, 50,
+                                         help="Time between frames in milliseconds")
+    if dimension == 2:
+        animation_cmap = st.sidebar.selectbox("Animation Colormap", 
+                                            ["viridis", "plasma", "inferno", "magma", "cividis", 
+                                             "Blues", "Greens", "Reds", "Purples", "jet"],
+                                            index=0,
+                                            help="Colormap for animation")
     
     # Wave packet parameters
     st.sidebar.subheader("Initial Wave Packet")
@@ -251,12 +325,15 @@ if dimension == 1:
         x_max=domain_max,
         n_points=n_points,
         potential_func=potential_func,
+        hbar=hbar,
+        mass=mass,
+        boundary=boundary,
         **potential_params
     )
     
     # Solve for eigenstates
     with st.spinner("Solving the Schrödinger equation..."):
-        eigenvalues, eigenvectors = solver.solve(n_eigenstates=n_states)
+        eigenvalues, eigenvectors = solver.solve(n_eigenstates=n_states, which=which_eigenvalues)
     
     # Display eigenvalues
     st.subheader("Energy Eigenvalues")
@@ -265,7 +342,7 @@ if dimension == 1:
     
     # Plot eigenstates
     st.subheader("Eigenstates and Potential")
-    fig = solver.plot_eigenstates(n_states=n_states)
+    fig = solver.plot_eigenstates(n_states=n_states, figsize=figsize)
     st.pyplot(fig)
     
     # Animate time evolution if requested
@@ -283,7 +360,13 @@ if dimension == 1:
         
         with st.spinner("Creating animation..."):
             # Create the animation
-            anim = solver.animate_time_evolution(initial_state, t_max, n_steps)
+            anim = solver.animate_time_evolution(
+                initial_state, 
+                t_max, 
+                n_steps, 
+                interval=animation_interval,
+                figsize=figsize
+            )
             
             # Convert to GIF and display
             gif_buf = anim_to_gif(anim)
@@ -294,17 +377,20 @@ else:  # dimension == 2
     solver = Schrodinger2D(
         x_min=domain_min,
         x_max=domain_max,
-        y_min=domain_min,
-        y_max=domain_max,
-        nx=n_points,
-        ny=n_points,
+        y_min=domain_min_y,
+        y_max=domain_max_y,
+        nx=nx,
+        ny=ny,
         potential_func=potential_func,
+        hbar=hbar,
+        mass=mass,
+        boundary=boundary,
         **potential_params
     )
     
     # Solve for eigenstates
     with st.spinner("Solving the Schrödinger equation..."):
-        eigenvalues, eigenvectors = solver.solve(n_eigenstates=n_states)
+        eigenvalues, eigenvectors = solver.solve(n_eigenstates=n_states, which=which_eigenvalues)
     
     # Display eigenvalues
     st.subheader("Energy Eigenvalues")
@@ -313,14 +399,14 @@ else:  # dimension == 2
     
     # Plot potential
     st.subheader("Potential")
-    fig_potential = plt.figure(figsize=(8, 6))
+    fig_potential = plt.figure(figsize=figsize)
     ax = fig_potential.add_subplot(111, projection='3d')
-    solver.plot_potential(ax=ax)
+    solver.plot_potential(ax=ax, cmap=colormap)
     st.pyplot(fig_potential)
     
     # Plot eigenstates
     st.subheader("Eigenstates")
-    fig_eigenstates = solver.plot_eigenstates_grid(n_states=n_states)
+    fig_eigenstates = solver.plot_eigenstates_grid(n_states=n_states, figsize=figsize, cmap=colormap, plot_type=plot_type)
     st.pyplot(fig_eigenstates)
     
     # Animate time evolution if requested
@@ -341,7 +427,14 @@ else:  # dimension == 2
         
         with st.spinner("Creating animation..."):
             # Create the animation
-            anim = solver.animate_time_evolution(initial_state, t_max, n_steps)
+            anim = solver.animate_time_evolution(
+                initial_state, 
+                t_max, 
+                n_steps, 
+                interval=animation_interval,
+                figsize=figsize,
+                cmap=animation_cmap
+            )
             
             # Convert to GIF and display
             gif_buf = anim_to_gif(anim)
@@ -358,6 +451,32 @@ This app is a numerical solver for the Schrödinger equation in 1D and 2D. It us
 - Sparse matrix eigenvalue solver for finding energy levels and wave functions
 - Matplotlib for visualization
 - Streamlit for the interactive interface
+
+### Parameter Guide
+
+The app provides extensive customization options:
+
+**Physics Parameters**
+- **Reduced Planck Constant (ħ)**: Controls the quantum effects. Larger values increase quantum behavior.
+- **Particle Mass**: Affects the kinetic energy term. Heavier particles have less quantum tunneling.
+
+**Solver Options**
+- **Boundary Conditions**: 'dirichlet' (wave function is zero at boundaries) or 'periodic' (domain wraps around).
+- **Eigenvalue Selection**: 'SM' (smallest magnitude) or 'SA' (smallest algebraically).
+
+**Domain & Grid**
+- For 2D problems, you can set independent X and Y domains and grid resolutions.
+
+**Visualization Options**
+- Customize figure size, colormaps, and plot types for 2D visualizations.
+
+**Potential Parameters**
+- Each potential has specific parameters that can be adjusted.
+- For well potentials, you can adjust the depth and wall value.
+
+**Animation Options**
+- Frame interval controls animation speed.
+- For 2D, you can select a different colormap for animations.
 
 The code is available on GitHub: [schrodinger-solver](https://github.com/your-username/schrodinger-solver)
 """)
