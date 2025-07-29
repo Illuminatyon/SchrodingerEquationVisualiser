@@ -284,25 +284,24 @@ t = translations[language]
 # Custom CSS with Computer Modern font and animations
 st.markdown("""
 <style>
-    /* Import Computer Modern font with multiple sources for better compatibility */
+    /* Import Computer Modern font */
     @import url('https://cdn.jsdelivr.net/npm/computer-modern-font@1.0.0/index.css');
-    @import url('https://cdn.jsdelivr.net/npm/@fontsource/computer-modern/index.css');
     
-    /* Apply font to all text with multiple fallbacks */
+    /* Apply Computer Modern font to all text */
     html, body, [class*="css"] {
-        font-family: 'Computer Modern Serif', 'CMU Serif', 'Times New Roman', Times, serif !important;
+        font-family: 'Computer Modern Serif', serif !important;
     }
     
-    /* Style headers with multiple fallbacks */
+    /* Style headers */
     h1, h2, h3, h4 {
-        font-family: 'Computer Modern Serif', 'CMU Serif', 'Times New Roman', Times, serif !important;
-        color: #F5F5F5 !important;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        font-family: 'Computer Modern Serif', serif !important;
+        color: #FFFFFF !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
     
-    /* Main title styling - gradient text */
+    /* Main title animation */
     h1 {
-        background: linear-gradient(45deg, #00E5FF, #00796B);
+        background: linear-gradient(45deg, #4B8BBE, #306998, #FFE873);
         background-size: 200% 200%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -315,10 +314,9 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
     
-    /* Sidebar styling - dark background with gradient */
+    /* Sidebar styling */
     .sidebar .sidebar-content {
-        background-image: linear-gradient(180deg, #1A237E 0%, #121212 100%) !important;
-        background-color: #121212 !important;
+        background-image: linear-gradient(180deg, #162B4D 10%, #0E1E3E 90%) !important;
     }
     
     /* Button animations */
@@ -342,56 +340,52 @@ st.markdown("""
     
     /* Card-like sections */
     .element-container {
-        background-color: rgba(26, 35, 126, 0.2);  /* Deep blue with transparency */
+        background-color: rgba(22, 43, 77, 0.7);
         border-radius: 10px;
         padding: 10px;
         margin: 10px 0;
-        box-shadow: 0 4px 10px rgba(0, 229, 255, 0.2);  /* Cyan glow */
-        border: 1px solid rgba(0, 121, 107, 0.3);  /* Teal border */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
     .element-container:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 229, 255, 0.4);  /* Brighter cyan glow on hover */
-        border: 1px solid rgba(0, 121, 107, 0.6);  /* Brighter teal border on hover */
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     }
     
     /* Dataframe styling */
     .dataframe {
-        font-family: 'Computer Modern Serif', 'CMU Serif', 'Times New Roman', Times, serif !important;
+        font-family: 'Computer Modern Serif', serif !important;
         border-collapse: collapse;
         margin: 20px 0;
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);  /* Cyan glow */
-        background-color: rgba(18, 18, 18, 0.7);  /* Dark background */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     }
     
     .dataframe thead th {
-        background-color: #1A237E;  /* Deep blue */
-        color: #F5F5F5;  /* Light text */
+        background-color: #4B8BBE;
+        color: white;
         font-weight: bold;
         text-align: left;
         padding: 12px 15px;
-        border-bottom: 2px solid #00796B;  /* Teal border */
     }
     
     .dataframe tbody tr {
-        border-bottom: 1px solid rgba(0, 121, 107, 0.3);  /* Teal border with transparency */
+        border-bottom: 1px solid #dddddd;
         transition: background-color 0.3s;
     }
     
     .dataframe tbody tr:nth-of-type(even) {
-        background-color: rgba(26, 35, 126, 0.2);  /* Deep blue with transparency */
+        background-color: rgba(22, 43, 77, 0.7);
     }
     
     .dataframe tbody tr:last-of-type {
-        border-bottom: 2px solid #00796B;  /* Teal border */
+        border-bottom: 2px solid #4B8BBE;
     }
     
     .dataframe tbody tr:hover {
-        background-color: rgba(123, 31, 162, 0.3);  /* Purple with transparency on hover */
+        background-color: rgba(75, 139, 190, 0.3);
     }
     
     /* Pulsing animation for computation indicators */
@@ -408,24 +402,6 @@ st.markdown("""
     /* Improve LaTeX rendering */
     .katex {
         font-size: 1.1em !important;
-        line-height: 1.5 !important;
-        text-align: center !important;
-        margin: 10px auto !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-    }
-    
-    /* Ensure LaTeX equations are centered and have proper spacing */
-    .katex-display {
-        margin: 1.2em 0 !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        padding: 5px !important;
-    }
-    
-    /* Make sure LaTeX symbols are properly sized */
-    .katex-html {
-        font-size: 1.1em !important;
     }
     
     /* Custom scrollbar */
@@ -435,20 +411,17 @@ st.markdown("""
     }
     
     ::-webkit-scrollbar-track {
-        background: #121212;  /* Dark background */
+        background: #0E1E3E;
         border-radius: 10px;
-        border: 1px solid rgba(0, 121, 107, 0.2);  /* Subtle teal border */
     }
     
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(45deg, #1A237E, #00796B);  /* Gradient from deep blue to teal */
+        background: #4B8BBE;
         border-radius: 10px;
-        box-shadow: 0 0 5px rgba(0, 229, 255, 0.3);  /* Subtle cyan glow */
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(45deg, #00796B, #00E5FF);  /* Gradient from teal to cyan on hover */
-        box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);  /* Enhanced cyan glow on hover */
+        background: #306998;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -458,51 +431,68 @@ app_title = t["app_title"]
 app_subtitle = t["app_subtitle"]
 
 st.markdown(f"""
-<div style="display: flex; align-items: center; margin-bottom: 20px; background: #121212; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,229,255,0.3); border: 1px solid #00796B;">
+<div style="display: flex; align-items: center; margin-bottom: 20px; background: linear-gradient(90deg, rgba(14,30,62,0.8) 0%, rgba(22,43,77,0.9) 100%); padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     <div style="font-size: 42px; margin-right: 20px; animation: pulse 2s infinite;">🔬</div>
     <div>
-        <h1 style="margin: 0; background: linear-gradient(45deg, #00E5FF, #00796B); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient 6s ease infinite;">{app_title}</h1>
-        <p style="margin: 0; font-style: italic; color: #F5F5F5;">{app_subtitle}</p>
+        <h1 style="margin: 0; background: linear-gradient(45deg, #4B8BBE, #306998, #FFE873); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient 6s ease infinite;">{app_title}</h1>
+        <p style="margin: 0; font-style: italic; color: #FFFFFF;">{app_subtitle}</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Description with simple border
+# Description with animated border
 st.markdown("""
-<div style="border: 2px solid #00796B; border-radius: 10px; padding: 20px; margin-bottom: 20px; background-color: rgba(26, 35, 126, 0.2); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); position: relative; overflow: hidden;">
-    <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100px; background: radial-gradient(circle, rgba(0,229,255,0.2) 0%, rgba(26,35,126,0) 70%); border-radius: 50%; transform: translate(30%, -30%);"></div>
-    <p style="color: #F5F5F5; position: relative; z-index: 1;">This app solves the time-independent Schrödinger equation and visualizes the eigenstates
+<div style="border: 2px solid #4B8BBE; border-radius: 10px; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; animation: borderPulse 4s infinite;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #FFE873, transparent); animation: borderFlow 2s infinite linear;"></div>
+    <p>This app solves the time-independent Schrödinger equation and visualizes the eigenstates
     and time evolution of quantum states for various potentials in 1D and 2D.</p>
-    <div style="position: absolute; bottom: 0; left: 0; width: 100px; height: 100px; background: radial-gradient(circle, rgba(123,31,162,0.2) 0%, rgba(26,35,126,0) 70%); border-radius: 50%; transform: translate(-30%, 30%);"></div>
+    
+    <p>The equation being solved is:</p>
+    
+    $$-\\frac{\\hbar^2}{2m}\\nabla^2\\psi + V(\\mathbf{r})\\psi = E\\psi$$
+    
+    <p>where:</p>
+    <ul>
+        <li>$\\psi$ is the wave function</li>
+        <li>$\\hbar$ is the reduced Planck constant</li>
+        <li>$m$ is the particle mass</li>
+        <li>$V(\\mathbf{r})$ is the potential</li>
+        <li>$E$ is the energy</li>
+    </ul>
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #FFE873, transparent); animation: borderFlow 2s infinite linear reverse;"></div>
 </div>
+
+<style>
+@keyframes borderFlow {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+@keyframes borderPulse {
+    0% { box-shadow: 0 0 5px rgba(75, 139, 190, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(75, 139, 190, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(75, 139, 190, 0.5); }
+}
+</style>
 """, unsafe_allow_html=True)
 
-# Use Streamlit's native LaTeX support for the equation
-st.write(t["equation_description"])
+# Add language selector to the sidebar
+language = st.sidebar.selectbox(
+    "Language | Langue | Idioma",
+    ["English", "Français", "Español"],
+    index=0,
+    key="language_selector_2"
+)
 
-# Display the equation formula separately, bold and centered
-st.markdown('<div style="text-align: center; font-weight: bold;">', unsafe_allow_html=True)
-st.latex(r"-\frac{\hbar^2}{2m}\nabla^2\psi + V(\mathbf{r})\psi = E\psi")
-st.markdown('</div>', unsafe_allow_html=True)
+# Get translations for the selected language
+t = translations[language]
 
-# Group the explanation text together
-st.markdown("""
-**""" + t["where"] + """:**
-- $\psi$ """ + t["wave_function"] + """
-- $\hbar$ """ + t["planck_constant"] + """
-- $m$ """ + t["particle_mass"] + """
-- $V(\mathbf{r})$ """ + t["potential"] + """
-- $E$ """ + t["energy"] + """
-""")
-
-# Use translations from the first language selector
-# (The redundant second language selector has been removed)
-
-# Sidebar for parameters with simple styling
+# Sidebar for parameters with custom styling
 st.sidebar.markdown(f"""
-<div style="background: linear-gradient(135deg, rgba(26,35,126,0.7) 0%, rgba(18,18,18,0.9) 100%); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #00796B; box-shadow: 0 0 10px rgba(0,229,255,0.2);">
-    <h2 style="margin: 0; background: linear-gradient(45deg, #00E5FF, #FFA000); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient 6s ease infinite; text-align: center; font-family: 'Computer Modern Serif', 'CMU Serif', 'Times New Roman', Times, serif;">
-        {t["parameters"]}
+<div style="background: linear-gradient(45deg, #0E1E3E, #162B4D); padding: 10px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h2 style="margin: 0; color: white; text-align: center; font-family: 'Computer Modern Serif', serif;">
+        <span style="background: linear-gradient(45deg, #4B8BBE, #FFE873); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            {t["parameters"]}
+        </span>
     </h2>
 </div>
 """, unsafe_allow_html=True)
@@ -510,18 +500,18 @@ st.sidebar.markdown(f"""
 # Add a help button at the top of the sidebar
 with st.sidebar.expander(f"ℹ️ {t['how_to_use']}", expanded=False):
     st.markdown(f"""
-    <div style="font-family: 'Computer Modern Serif', 'CMU Serif', 'Times New Roman', Times, serif; color: #F5F5F5; background: rgba(26,35,126,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #00796B; box-shadow: 0 0 10px rgba(0,229,255,0.1);">
-        <p><strong style="color: #00E5FF;">{t['welcome']}</strong></p>
+    <div style="font-family: 'Computer Modern Serif', serif;">
+        <p><strong>{t['welcome']}</strong></p>
         <p>{t['app_allows']}</p>
-        <ol style="color: #F5F5F5;">
-            <li><span style="color: #FFA000;">{t['select_dimension']}</span></li>
-            <li><span style="color: #FFA000;">{t['choose_potential']}</span></li>
-            <li><span style="color: #FFA000;">{t['adjust_domain']}</span></li>
-            <li><span style="color: #FFA000;">{t['modify_parameters']}</span></li>
-            <li><span style="color: #FFA000;">{t['enable_time_evolution']}</span></li>
+        <ol>
+            <li>{t['select_dimension']}</li>
+            <li>{t['choose_potential']}</li>
+            <li>{t['adjust_domain']}</li>
+            <li>{t['modify_parameters']}</li>
+            <li>{t['enable_time_evolution']}</li>
         </ol>
         <p>{t['app_will_solve']}</p>
-        <p><em style="color: #00E5FF;">{t['hover_info']}</em></p>
+        <p><em>{t['hover_info']}</em></p>
     </div>
     """, unsafe_allow_html=True)
 

@@ -478,21 +478,16 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Use Streamlit's native LaTeX support for the equation
-st.write(t["equation_description"])
-
-# Display the equation formula separately, bold and centered
-st.markdown('<div style="text-align: center; font-weight: bold;">', unsafe_allow_html=True)
+st.write("The equation being solved is:")
 st.latex(r"-\frac{\hbar^2}{2m}\nabla^2\psi + V(\mathbf{r})\psi = E\psi")
-st.markdown('</div>', unsafe_allow_html=True)
 
-# Group the explanation text together
+st.write("where:")
 st.markdown("""
-**""" + t["where"] + """:**
-- $\psi$ """ + t["wave_function"] + """
-- $\hbar$ """ + t["planck_constant"] + """
-- $m$ """ + t["particle_mass"] + """
-- $V(\mathbf{r})$ """ + t["potential"] + """
-- $E$ """ + t["energy"] + """
+- $\psi$ is the wave function
+- $\hbar$ is the reduced Planck constant
+- $m$ is the particle mass
+- $V(\mathbf{r})$ is the potential
+- $E$ is the energy
 """)
 
 # Use translations from the first language selector
