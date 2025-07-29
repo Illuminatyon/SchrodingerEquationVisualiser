@@ -1,0 +1,228 @@
+"""
+Custom Matplotlib style for the Schrödinger equation solver.
+
+This module provides functions to set up a consistent dark theme for Matplotlib
+plots that matches the Streamlit application's dark blue theme.
+"""
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib.colors import LinearSegmentedColormap
+import numpy as np
+
+def set_mpl_theme():
+    """
+    Set up a dark theme for Matplotlib plots that matches the Streamlit app's theme.
+    """
+    # Define colors that match our Streamlit theme
+    background_color = '#0E1E3E'  # Dark blue background
+    text_color = '#FFFFFF'        # White text
+    grid_color = '#4B8BBE'        # Python blue for grid
+    accent_color = '#FFE873'      # Python yellow for accents
+    
+    # Create a custom style dictionary
+    style_dict = {
+        'axes.facecolor': background_color,
+        'axes.edgecolor': text_color,
+        'axes.labelcolor': text_color,
+        'axes.grid': True,
+        'axes.grid.which': 'both',
+        'axes.grid.axis': 'both',
+        'axes.axisbelow': True,
+        'axes.labelsize': 12,
+        'axes.titlesize': 14,
+        'axes.titleweight': 'bold',
+        'axes.titlepad': 10,
+        'axes.spines.top': True,
+        'axes.spines.right': True,
+        'axes.spines.bottom': True,
+        'axes.spines.left': True,
+        
+        'figure.facecolor': background_color,
+        'figure.edgecolor': background_color,
+        'figure.figsize': (10, 6),
+        'figure.dpi': 100,
+        'figure.titlesize': 16,
+        'figure.titleweight': 'bold',
+        
+        'grid.color': grid_color,
+        'grid.linestyle': '--',
+        'grid.linewidth': 0.5,
+        'grid.alpha': 0.5,
+        
+        'xtick.color': text_color,
+        'xtick.direction': 'out',
+        'xtick.labelsize': 10,
+        'xtick.major.size': 5,
+        'xtick.major.width': 1,
+        'xtick.minor.size': 3,
+        'xtick.minor.width': 0.5,
+        
+        'ytick.color': text_color,
+        'ytick.direction': 'out',
+        'ytick.labelsize': 10,
+        'ytick.major.size': 5,
+        'ytick.major.width': 1,
+        'ytick.minor.size': 3,
+        'ytick.minor.width': 0.5,
+        
+        'legend.facecolor': background_color,
+        'legend.edgecolor': text_color,
+        'legend.fontsize': 10,
+        'legend.title_fontsize': 12,
+        'legend.framealpha': 0.8,
+        'legend.frameon': True,
+        
+        'lines.linewidth': 2,
+        'lines.markersize': 8,
+        
+        'text.color': text_color,
+        'font.family': 'serif',
+        'font.serif': ['Computer Modern Roman'],
+        
+        'savefig.facecolor': background_color,
+        'savefig.edgecolor': background_color,
+        'savefig.dpi': 100,
+    }
+    
+    # Apply the style
+    plt.style.use(style_dict)
+    
+    # Create custom colormaps
+    # Viridis-like colormap but with colors matching our theme
+    colors = [background_color, grid_color, accent_color]
+    positions = np.array([0.0, 0.5, 1.0])
+    colors_array = np.array([mpl.colors.to_rgb(c) for c in colors])
+    quantum_cmap = LinearSegmentedColormap.from_list('quantum', 
+                                                list(zip(positions, colors_array)))
+    
+    # Register the colormap with matplotlib so it can be referenced by name
+    # Use the appropriate registration method based on matplotlib version
+    try:
+        # For newer matplotlib versions
+        plt.colormaps.register(quantum_cmap)
+    except AttributeError:
+        try:
+            # Alternative for newer versions
+            mpl.colormaps.register(quantum_cmap)
+        except AttributeError:
+            # For older matplotlib versions
+            plt.register_cmap(name='quantum', cmap=quantum_cmap)
+    
+    # Set the colormap as default
+    plt.set_cmap(quantum_cmap)
+    
+    return style_dict, quantum_cmap
+
+def apply_style_to_figure(fig, ax=None):
+    """
+    Apply the custom style to an existing figure and axes.
+    
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+        The figure to style
+    ax : matplotlib.axes.Axes or list of Axes, optional
+        The axes to style. If None, all axes in the figure will be styled.
+    """
+    # Get the style dictionary
+    style_dict, _ = set_mpl_theme()
+    
+    # Apply background color to figure
+    fig.patch.set_facecolor(style_dict['figure.facecolor'])
+    
+    # If ax is not provided, get all axes
+    if ax is None:
+        ax = fig.get_axes()
+    
+    # Convert single axis to list for consistent handling
+    if not isinstance(ax, list):
+        ax = [ax]
+    
+    # Apply style to each axis
+    for a in ax:
+        a.set_facecolor(style_dict['axes.facecolor'])
+        a.xaxis.label.set_color(style_dict['axes.labelcolor'])
+        a.yaxis.label.set_color(style_dict['axes.labelcolor'])
+        a.title.set_color(style_dict['text.color'])
+        
+        # Style the spines
+        for spine in a.spines.values():
+            spine.set_color(style_dict['axes.edgecolor'])
+        
+        # Style the ticks
+        a.tick_params(axis='x', colors=style_dict['xtick.color'])
+        a.tick_params(axis='y', colors=style_dict['ytick.color'])
+        
+        # Style the grid
+        a.grid(True, linestyle=style_dict['grid.linestyle'], 
+               alpha=style_dict['grid.alpha'], color=style_dict['grid.color'])
+        
+        # If there's a legend, style it
+        if a.get_legend() is not None:
+            legend = a.get_legend()
+            frame = legend.get_frame()
+            frame.set_facecolor(style_dict['legend.facecolor'])
+            frame.set_edgecolor(style_dict['legend.edgecolor'])
+            
+            # Style the text in the legend
+            for text in legend.get_texts():
+                text.set_color(style_dict['text.color'])
+    
+    return fig, ax
+
+def create_animated_colorbar(fig, ax, mappable, label=""):
+    """
+    Create an animated colorbar with a pulsing effect.
+    
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+        The figure to add the colorbar to
+    ax : matplotlib.axes.Axes
+        The axes associated with the mappable
+    mappable : matplotlib.cm.ScalarMappable
+        The mappable to create a colorbar for
+    label : str, optional
+        The label for the colorbar
+        
+    Returns
+    -------
+    colorbar : matplotlib.colorbar.Colorbar
+        The created colorbar
+    """
+    # Create the colorbar
+    cbar = fig.colorbar(mappable, ax=ax)
+    cbar.set_label(label, color='white')
+    
+    # Style the colorbar
+    cbar.ax.yaxis.set_tick_params(color='white')
+    cbar.outline.set_edgecolor('white')
+    for label in cbar.ax.get_yticklabels():
+        label.set_color('white')
+    
+    return cbar
+
+def get_quantum_colors(n):
+    """
+    Get a list of n distinct colors that match our quantum theme.
+    
+    Parameters
+    ----------
+    n : int
+        Number of colors to generate
+        
+    Returns
+    -------
+    colors : list
+        List of n colors as hex strings
+    """
+    # Base colors from our theme
+    base_colors = ['#4B8BBE', '#306998', '#FFE873', '#FFC331', '#FFFFFF']
+    
+    if n <= len(base_colors):
+        return base_colors[:n]
+    
+    # If we need more colors, generate them by interpolating
+    _, cmap = set_mpl_theme()
+    return [mpl.colors.rgb2hex(cmap(i / (n-1))) for i in range(n)]
