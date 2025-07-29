@@ -13,6 +13,11 @@ from schrodinger_solver import potentials
 from schrodinger_solver.solver_1d import Schrodinger1D
 from schrodinger_solver.solver_2d import Schrodinger2D
 
+# Import custom Matplotlib styling
+import custom_mpl_style
+
+# Initialize custom Matplotlib theme
+custom_mpl_style.set_mpl_theme()
 
 # Set page configuration
 st.set_page_config(
@@ -21,26 +26,225 @@ st.set_page_config(
     layout="wide",
 )
 
-# Title and description
-st.title("Schrödinger Equation Solver")
+# Custom CSS with Computer Modern font and animations
 st.markdown("""
-This app solves the time-independent Schrödinger equation and visualizes the eigenstates
-and time evolution of quantum states for various potentials in 1D and 2D.
+<style>
+    /* Import Computer Modern font */
+    @import url('https://cdn.jsdelivr.net/npm/computer-modern-font@1.0.0/index.css');
+    
+    /* Apply Computer Modern font to all text */
+    html, body, [class*="css"] {
+        font-family: 'Computer Modern Serif', serif !important;
+    }
+    
+    /* Style headers */
+    h1, h2, h3, h4 {
+        font-family: 'Computer Modern Serif', serif !important;
+        color: #FFFFFF !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    /* Main title animation */
+    h1 {
+        background: linear-gradient(45deg, #4B8BBE, #306998, #FFE873);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradient 6s ease infinite;
+    }
+    
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    /* Sidebar styling */
+    .sidebar .sidebar-content {
+        background-image: linear-gradient(180deg, #162B4D 10%, #0E1E3E 90%) !important;
+    }
+    
+    /* Button animations */
+    button {
+        transition: all 0.3s ease;
+    }
+    
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    /* Slider animations */
+    .stSlider {
+        transition: all 0.3s ease;
+    }
+    
+    .stSlider:hover {
+        transform: scale(1.02);
+    }
+    
+    /* Card-like sections */
+    .element-container {
+        background-color: rgba(22, 43, 77, 0.7);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .element-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Dataframe styling */
+    .dataframe {
+        font-family: 'Computer Modern Serif', serif !important;
+        border-collapse: collapse;
+        margin: 20px 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .dataframe thead th {
+        background-color: #4B8BBE;
+        color: white;
+        font-weight: bold;
+        text-align: left;
+        padding: 12px 15px;
+    }
+    
+    .dataframe tbody tr {
+        border-bottom: 1px solid #dddddd;
+        transition: background-color 0.3s;
+    }
+    
+    .dataframe tbody tr:nth-of-type(even) {
+        background-color: rgba(22, 43, 77, 0.7);
+    }
+    
+    .dataframe tbody tr:last-of-type {
+        border-bottom: 2px solid #4B8BBE;
+    }
+    
+    .dataframe tbody tr:hover {
+        background-color: rgba(75, 139, 190, 0.3);
+    }
+    
+    /* Pulsing animation for computation indicators */
+    .stSpinner {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    /* Improve LaTeX rendering */
+    .katex {
+        font-size: 1.1em !important;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #0E1E3E;
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #4B8BBE;
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #306998;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-The equation being solved is:
+# Custom header with logo and title
+st.markdown("""
+<div style="display: flex; align-items: center; margin-bottom: 20px; background: linear-gradient(90deg, rgba(14,30,62,0.8) 0%, rgba(22,43,77,0.9) 100%); padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <div style="font-size: 42px; margin-right: 20px; animation: pulse 2s infinite;">🔬</div>
+    <div>
+        <h1 style="margin: 0; background: linear-gradient(45deg, #4B8BBE, #306998, #FFE873); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradient 6s ease infinite;">Schrödinger Equation Solver</h1>
+        <p style="margin: 0; font-style: italic; color: #FFFFFF;">Quantum mechanics visualization tool</p>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-$$-\\frac{\\hbar^2}{2m}\\nabla^2\\psi + V(\\mathbf{r})\\psi = E\\psi$$
+# Description with animated border
+st.markdown("""
+<div style="border: 2px solid #4B8BBE; border-radius: 10px; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; animation: borderPulse 4s infinite;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #FFE873, transparent); animation: borderFlow 2s infinite linear;"></div>
+    <p>This app solves the time-independent Schrödinger equation and visualizes the eigenstates
+    and time evolution of quantum states for various potentials in 1D and 2D.</p>
+    
+    <p>The equation being solved is:</p>
+    
+    $$-\\frac{\\hbar^2}{2m}\\nabla^2\\psi + V(\\mathbf{r})\\psi = E\\psi$$
+    
+    <p>where:</p>
+    <ul>
+        <li>$\\psi$ is the wave function</li>
+        <li>$\\hbar$ is the reduced Planck constant</li>
+        <li>$m$ is the particle mass</li>
+        <li>$V(\\mathbf{r})$ is the potential</li>
+        <li>$E$ is the energy</li>
+    </ul>
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #FFE873, transparent); animation: borderFlow 2s infinite linear reverse;"></div>
+</div>
 
-where:
-- $\\psi$ is the wave function
-- $\\hbar$ is the reduced Planck constant
-- $m$ is the particle mass
-- $V(\\mathbf{r})$ is the potential
-- $E$ is the energy
-""")
+<style>
+@keyframes borderFlow {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+@keyframes borderPulse {
+    0% { box-shadow: 0 0 5px rgba(75, 139, 190, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(75, 139, 190, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(75, 139, 190, 0.5); }
+}
+</style>
+""", unsafe_allow_html=True)
 
-# Sidebar for parameters
-st.sidebar.header("Parameters")
+# Sidebar for parameters with custom styling
+st.sidebar.markdown("""
+<div style="background: linear-gradient(45deg, #0E1E3E, #162B4D); padding: 10px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h2 style="margin: 0; color: white; text-align: center; font-family: 'Computer Modern Serif', serif;">
+        <span style="background: linear-gradient(45deg, #4B8BBE, #FFE873); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Parameters
+        </span>
+    </h2>
+</div>
+""", unsafe_allow_html=True)
+
+# Add a help button at the top of the sidebar
+with st.sidebar.expander("ℹ️ How to use this app", expanded=False):
+    st.markdown("""
+    <div style="font-family: 'Computer Modern Serif', serif;">
+        <p><strong>Welcome to the Schrödinger Equation Solver!</strong></p>
+        <p>This app allows you to visualize quantum states for various potentials in 1D and 2D.</p>
+        <ol>
+            <li>Select the <strong>dimension</strong> (1D or 2D)</li>
+            <li>Choose a <strong>potential</strong> from the dropdown</li>
+            <li>Adjust the <strong>domain</strong> and <strong>grid resolution</strong></li>
+            <li>Modify <strong>potential-specific parameters</strong></li>
+            <li>Enable <strong>time evolution</strong> to see animations</li>
+        </ol>
+        <p>The app will solve the Schrödinger equation and display the eigenstates and energy levels.</p>
+        <p><em>Hover over any parameter for additional information!</em></p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Dimension selection
 dimension = st.sidebar.radio("Dimension", [1, 2], index=0)
@@ -440,43 +644,147 @@ else:  # dimension == 2
             gif_buf = anim_to_gif(anim)
             st.image(gif_buf, caption="Time Evolution of Quantum State")
 
-# Add information about the project
+# Add information about the project with enhanced styling
 st.markdown("""
----
-### About this Project
+<div style="height: 2px; background: linear-gradient(90deg, #0E1E3E, #4B8BBE, #0E1E3E); margin: 40px 0 20px 0;"></div>
+""", unsafe_allow_html=True)
 
-This app is a numerical solver for the Schrödinger equation in 1D and 2D. It uses:
+st.markdown("""
+<div style="background: linear-gradient(135deg, rgba(14,30,62,0.8) 0%, rgba(22,43,77,0.9) 100%); 
+            padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            border-left: 5px solid #4B8BBE; margin-bottom: 20px;">
+    <h2 style="color: white; font-family: 'Computer Modern Serif', serif; margin-top: 0;">
+        <span style="background: linear-gradient(45deg, #4B8BBE, #FFE873); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            About this Project
+        </span>
+    </h2>
+    <p>This app is a numerical solver for the Schrödinger equation in 1D and 2D, featuring an enhanced UI with animations and LaTeX styling.</p>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; margin: 20px 0;">
+        <div style="flex: 1; min-width: 200px; background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h4 style="margin-top: 0; color: #FFE873;">Core Technology</h4>
+            <ul style="margin-bottom: 0;">
+                <li>Finite difference method for spatial discretization</li>
+                <li>Sparse matrix eigenvalue solver for energy levels</li>
+                <li>Matplotlib with custom styling for visualization</li>
+                <li>Streamlit for the interactive interface</li>
+            </ul>
+        </div>
+        <div style="flex: 1; min-width: 200px; background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h4 style="margin-top: 0; color: #FFE873;">UI Features</h4>
+            <ul style="margin-bottom: 0;">
+                <li>Computer Modern font for LaTeX-like typography</li>
+                <li>Dark blue theme with custom styling</li>
+                <li>Animated elements for a dynamic interface</li>
+                <li>Responsive layout for different screen sizes</li>
+            </ul>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-- Finite difference method for spatial discretization
-- Sparse matrix eigenvalue solver for finding energy levels and wave functions
-- Matplotlib for visualization
-- Streamlit for the interactive interface
+# Parameter guide with enhanced styling
+st.markdown("""
+<div style="background: linear-gradient(135deg, rgba(14,30,62,0.8) 0%, rgba(22,43,77,0.9) 100%); 
+            padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            border-left: 5px solid #4B8BBE; margin-bottom: 20px; position: relative; overflow: hidden;">
+    
+    <div style="position: absolute; top: 0; right: 0; width: 150px; height: 150px; 
+                background: radial-gradient(circle, rgba(75,139,190,0.2) 0%, rgba(14,30,62,0) 70%); 
+                border-radius: 50%; transform: translate(50%, -50%);"></div>
+    
+    <h2 style="color: white; font-family: 'Computer Modern Serif', serif; margin-top: 0;">
+        <span style="background: linear-gradient(45deg, #4B8BBE, #FFE873); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Parameter Guide
+        </span>
+    </h2>
+    
+    <p>The app provides extensive customization options:</p>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px;">
+        <div style="flex: 1; min-width: 200px; background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 15px rgba(0,0,0,0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';">
+            <h4 style="margin-top: 0; color: #FFE873;">Physics Parameters</h4>
+            <ul style="margin-bottom: 0;">
+                <li><strong>Reduced Planck Constant (ħ)</strong>: Controls quantum effects. Larger values increase quantum behavior.</li>
+                <li><strong>Particle Mass</strong>: Affects kinetic energy. Heavier particles have less quantum tunneling.</li>
+            </ul>
+        </div>
+        
+        <div style="flex: 1; min-width: 200px; background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 15px rgba(0,0,0,0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';">
+            <h4 style="margin-top: 0; color: #FFE873;">Solver Options</h4>
+            <ul style="margin-bottom: 0;">
+                <li><strong>Boundary Conditions</strong>: 'dirichlet' (wave function is zero at boundaries) or 'periodic' (domain wraps around).</li>
+                <li><strong>Eigenvalue Selection</strong>: 'SM' (smallest magnitude) or 'SA' (smallest algebraically).</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px;">
+        <div style="flex: 1; min-width: 200px; background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 15px rgba(0,0,0,0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';">
+            <h4 style="margin-top: 0; color: #FFE873;">Domain & Visualization</h4>
+            <ul style="margin-bottom: 0;">
+                <li>For 2D problems, you can set independent X and Y domains and grid resolutions.</li>
+                <li>Customize figure size, colormaps, and plot types for 2D visualizations.</li>
+            </ul>
+        </div>
+        
+        <div style="flex: 1; min-width: 200px; background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 15px rgba(0,0,0,0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.1)';">
+            <h4 style="margin-top: 0; color: #FFE873;">Animation & Potentials</h4>
+            <ul style="margin-bottom: 0;">
+                <li>Frame interval controls animation speed. For 2D, you can select different colormaps.</li>
+                <li>Each potential has specific parameters that can be adjusted.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-### Parameter Guide
+# UI Customization Guide
+st.markdown("""
+<div style="background: linear-gradient(135deg, rgba(14,30,62,0.8) 0%, rgba(22,43,77,0.9) 100%); 
+            padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            border-left: 5px solid #4B8BBE; margin-bottom: 20px;">
+    <h2 style="color: white; font-family: 'Computer Modern Serif', serif; margin-top: 0;">
+        <span style="background: linear-gradient(45deg, #4B8BBE, #FFE873); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            UI Customization Guide
+        </span>
+    </h2>
+    
+    <p>This application features a custom UI with several enhancements:</p>
+    
+    <div style="background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; margin-top: 15px;">
+        <h4 style="margin-top: 0; color: #FFE873;">Theme Customization</h4>
+        <p>The dark blue theme is configured in <code>.streamlit/config.toml</code> with these settings:</p>
+        <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px; overflow-x: auto;">
+[theme]
+primaryColor = "#4B8BBE"  # Python blue
+backgroundColor = "#0E1E3E"  # Dark blue
+secondaryBackgroundColor = "#162B4D"  # Lighter dark blue
+textColor = "#FFFFFF"  # White text
+font = "Computer Modern"  # LaTeX-like font
+        </pre>
+    </div>
+    
+    <div style="background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; margin-top: 15px;">
+        <h4 style="margin-top: 0; color: #FFE873;">Custom Styling</h4>
+        <p>Additional styling is applied through custom CSS injected via <code>st.markdown()</code> with <code>unsafe_allow_html=True</code>:</p>
+        <ul>
+            <li>Computer Modern font loading from CDN</li>
+            <li>Gradient animations for headers</li>
+            <li>Hover effects for interactive elements</li>
+            <li>Custom scrollbars and card-like sections</li>
+        </ul>
+    </div>
+    
+    <div style="background: rgba(14,30,62,0.5); padding: 15px; border-radius: 8px; margin-top: 15px;">
+        <h4 style="margin-top: 0; color: #FFE873;">Plot Styling</h4>
+        <p>Matplotlib plots use a custom dark theme defined in <code>custom_mpl_style.py</code> that matches the application's color scheme.</p>
+    </div>
+    
+    <p style="margin-top: 15px;">The code is available on GitHub: <a href="https://github.com/your-username/schrodinger-solver" style="color: #4B8BBE; text-decoration: none; border-bottom: 1px dotted #4B8BBE;">schrodinger-solver</a></p>
+</div>
 
-The app provides extensive customization options:
-
-**Physics Parameters**
-- **Reduced Planck Constant (ħ)**: Controls the quantum effects. Larger values increase quantum behavior.
-- **Particle Mass**: Affects the kinetic energy term. Heavier particles have less quantum tunneling.
-
-**Solver Options**
-- **Boundary Conditions**: 'dirichlet' (wave function is zero at boundaries) or 'periodic' (domain wraps around).
-- **Eigenvalue Selection**: 'SM' (smallest magnitude) or 'SA' (smallest algebraically).
-
-**Domain & Grid**
-- For 2D problems, you can set independent X and Y domains and grid resolutions.
-
-**Visualization Options**
-- Customize figure size, colormaps, and plot types for 2D visualizations.
-
-**Potential Parameters**
-- Each potential has specific parameters that can be adjusted.
-- For well potentials, you can adjust the depth and wall value.
-
-**Animation Options**
-- Frame interval controls animation speed.
-- For 2D, you can select a different colormap for animations.
-
-The code is available on GitHub: [schrodinger-solver](https://github.com/your-username/schrodinger-solver)
-""")
+<div style="text-align: center; margin: 30px 0; font-size: 12px; color: rgba(255,255,255,0.6);">
+    <p>© 2025 | Created with ❤️ using Streamlit and Python</p>
+</div>
+""", unsafe_allow_html=True)
