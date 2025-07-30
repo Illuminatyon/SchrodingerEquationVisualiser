@@ -12,6 +12,24 @@ Cette application interactive résout l'équation de Schrödinger indépendante 
 
 ![Capture d'écran de l'application](../test_colormap_registration.png)
 
+## 📊 Exemples de Visualisation
+
+### Visualisation 1D
+![Exemple de visualisation 1D](../images/1d_example.png)
+*Visualisation des états propres et du potentiel pour un oscillateur harmonique en 1D, montrant plusieurs niveaux d'énergie avec leurs fonctions d'onde correspondantes.*
+
+### Visualisation 2D
+![Exemple de visualisation 2D](../images/9888097c23b8e5c2824aec468539287b3be3600a0f74890234bf1e8a.png)
+*Visualisation des états propres pour un puits infini en 2D, montrant des tracés de contour de la densité de probabilité pour différents niveaux d'énergie.*
+
+### Évolution Temporelle
+![Animation de l'évolution temporelle](../images/3ba05eaee105a4f7fee19dbd21bac133cc509da45857f0770930fb9c.gif)
+*Animation d'un paquet d'onde gaussien évoluant dans un puits de potentiel, démontrant la dynamique quantique au fil du temps.*
+
+### Tracé de Surface 3D
+![Tracé de surface 3D](../images/e33246c98d78151748bf603b55ee3b883396913540876c53241adc4e.png)
+*Tracé de surface 3D d'une fonction de potentiel 2D, montrant la forme de la surface d'énergie potentielle.*
+
 ### ✨ Fonctionnalités
 
 - **Solveur complet** : Résout l'équation de Schrödinger indépendante du temps en 1D et 2D

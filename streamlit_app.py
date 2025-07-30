@@ -775,16 +775,51 @@ def create_gaussian_wave_packet_2d(x_grid, y_grid, center_x, center_y, width_x, 
 
 
 # Function to convert matplotlib animation to a GIF for Streamlit
-def anim_to_gif(anim):
-    """Convert a matplotlib animation to a GIF."""
-    # Get the number of frames from the animation
-    # For FuncAnimation, we can access the frames from the _frames attribute
-    # or use the number of frames passed to the animation (n_steps)
-    if hasattr(anim, '_frames'):
-        n_frames = len(anim._frames)
-    else:
-        # Fallback to the number of frames in the animation
-        n_frames = len(anim._func())
+def anim_to_gif(anim, n_frames=None):
+    """Convert a matplotlib animation to a GIF.
+    
+    Parameters
+    ----------
+    anim : matplotlib.animation.FuncAnimation
+        The animation to convert.
+    n_frames : int, optional
+        Number of frames in the animation. If None, will try to determine automatically.
+    """
+    # Use provided n_frames if available
+    if n_frames is None:
+        # Try to determine the number of frames from the animation
+        # For FuncAnimation, we can access the frames from the _frames attribute
+        # or use the number of frames passed to the animation (n_steps)
+        if hasattr(anim, '_frames'):
+            n_frames = len(anim._frames)
+        elif hasattr(anim, '_save_seq'):
+            # For newer versions of matplotlib, use _save_seq
+            n_frames = len(anim._save_seq)
+        elif hasattr(anim, '_iter_frames'):
+            # Try to get frames from _iter_frames method if available
+            n_frames = len(list(anim._iter_frames()))
+        else:
+            # Try to get n_frames from the animation's frames parameter
+            try:
+                if hasattr(anim, '_args') and len(anim._args) > 0:
+                    frames_arg = anim._args[0]
+                    if isinstance(frames_arg, int):
+                        n_frames = frames_arg
+                    elif hasattr(frames_arg, '__len__'):
+                        n_frames = len(frames_arg)
+                    else:
+                        # Fallback to a safe default
+                        n_frames = 50
+                else:
+                    # Fallback to a safe default - try to get frames count from the animation object
+                    try:
+                        n_frames = anim._fig.axes[0].texts[0].get_text().count('\n') + 1
+                    except (AttributeError, IndexError):
+                        # If all else fails, assume a reasonable default
+                        n_frames = 50  # Default to 50 frames
+            except (AttributeError, IndexError, TypeError):
+                # If all else fails, assume a reasonable default
+                n_frames = 50  # Default to 50 frames
     
     frames = []
     for i in range(n_frames):
@@ -861,7 +896,7 @@ if dimension == 1:
             )
             
             # Convert to GIF and display
-            gif_buf = anim_to_gif(anim)
+            gif_buf = anim_to_gif(anim, n_frames=n_steps)
             st.image(gif_buf, caption=t["time_evolution_caption"])
 
 else:  # dimension == 2
@@ -929,5 +964,5 @@ else:  # dimension == 2
             )
             
             # Convert to GIF and display
-            gif_buf = anim_to_gif(anim)
+            gif_buf = anim_to_gif(anim, n_frames=n_steps)
             st.image(gif_buf, caption=t["time_evolution_caption"])
