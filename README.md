@@ -8,6 +8,24 @@
 
 ![Application Screenshot](test_colormap_registration.png)
 
+## 📊 Visualization Examples
+
+### 1D Visualization
+![1D Visualization Example](images/1d_example.png)
+*Visualization of eigenstates and potential for a harmonic oscillator in 1D, showing multiple energy levels with their corresponding wave functions.*
+
+### 2D Visualization
+![2D Visualization Example](images/9888097c23b8e5c2824aec468539287b3be3600a0f74890234bf1e8a.png)
+*Visualization of eigenstates for a 2D infinite well, showing contour plots of the probability density for different energy levels.*
+
+### Time Evolution
+![Time Evolution Animation](images/3ba05eaee105a4f7fee19dbd21bac133cc509da45857f0770930fb9c.gif)
+*Animation of a Gaussian wave packet evolving in a potential well, demonstrating quantum dynamics over time.*
+
+### 3D Surface Plot
+![3D Surface Plot](images/e33246c98d78151748bf603b55ee3b883396913540876c53241adc4e.png)
+*3D surface plot of a 2D potential function, showing the shape of the potential energy surface.*
+
 ## 🌐 Documentation in Multiple Languages
 
 This interactive application solves the time-independent Schrödinger equation and visualizes the eigenstates and time evolution of quantum states for various potentials in 1D and 2D.
