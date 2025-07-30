@@ -228,7 +228,7 @@ class Schrodinger2D:
         
         return ax
     
-    def plot_eigenfunction(self, n, ax=None, figsize=(10, 8), cmap='viridis', plot_type='surface', **plot_kwargs):
+    def plot_eigenfunction(self, n, ax=None, figsize=(10, 8), cmap='quantum_diverging', plot_type='surface', **plot_kwargs):
         """
         Plot the nth eigenfunction.
         
@@ -241,7 +241,7 @@ class Schrodinger2D:
         figsize : tuple, optional
             Figure size. Default is (10, 8).
         cmap : str, optional
-            Colormap to use. Default is 'viridis'.
+            Colormap to use. Default is 'quantum_diverging' for better visualization of negative values.
         plot_type : str, optional
             Type of plot ('surface', 'contour', or 'contourf'). Default is 'surface'.
         **plot_kwargs : dict
@@ -255,8 +255,17 @@ class Schrodinger2D:
         if self.eigenvectors is None:
             raise ValueError("You must call solve() first.")
         
+        # Import the formatter for negative values
+        from custom_mpl_style import format_negative_values, FuncFormatter
+        
         psi_2d = self.get_eigenfunction(n)
         energy = self.eigenvalues[n]
+        
+        # Format the energy value with a more prominent minus sign if negative
+        if energy < 0:
+            energy_str = f"E = −{abs(energy):.4f}"  # Unicode minus sign
+        else:
+            energy_str = f"E = {energy:.4f}"
         
         if ax is None:
             fig = plt.figure(figsize=figsize)
@@ -269,21 +278,29 @@ class Schrodinger2D:
             surf = ax.plot_surface(self.x_grid, self.y_grid, np.real(psi_2d), 
                                   cmap=cmap, **plot_kwargs)
             ax.set_zlabel('Wave Function')
-            plt.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
+            cbar = plt.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
+            cbar.ax.yaxis.set_major_formatter(FuncFormatter(format_negative_values))
         elif plot_type == 'contour':
             contour = ax.contour(self.x_grid, self.y_grid, np.real(psi_2d), 
                                 cmap=cmap, **plot_kwargs)
-            plt.colorbar(contour, ax=ax)
+            cbar = plt.colorbar(contour, ax=ax)
+            cbar.ax.yaxis.set_major_formatter(FuncFormatter(format_negative_values))
         elif plot_type == 'contourf':
             contourf = ax.contourf(self.x_grid, self.y_grid, np.real(psi_2d), 
                                   cmap=cmap, **plot_kwargs)
-            plt.colorbar(contourf, ax=ax)
+            cbar = plt.colorbar(contourf, ax=ax)
+            cbar.ax.yaxis.set_major_formatter(FuncFormatter(format_negative_values))
         else:
             raise ValueError("plot_type must be 'surface', 'contour', or 'contourf'")
         
+        # Make negative labels in colorbar bold
+        for label in cbar.ax.get_yticklabels():
+            if '−' in label.get_text():  # Unicode minus sign
+                label.set_fontweight('bold')
+        
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
-        ax.set_title(f'Eigenfunction {n} (E = {energy:.4f})')
+        ax.set_title(f'Eigenfunction {n} ({energy_str})')
         
         return ax
     
@@ -314,8 +331,17 @@ class Schrodinger2D:
         if self.eigenvectors is None:
             raise ValueError("You must call solve() first.")
         
+        # Import the formatter for negative values
+        from custom_mpl_style import format_negative_values, FuncFormatter
+        
         prob_density = self.get_probability_density(n)
         energy = self.eigenvalues[n]
+        
+        # Format the energy value with a more prominent minus sign if negative
+        if energy < 0:
+            energy_str = f"E = −{abs(energy):.4f}"  # Unicode minus sign
+        else:
+            energy_str = f"E = {energy:.4f}"
         
         if ax is None:
             fig = plt.figure(figsize=figsize)
@@ -328,25 +354,26 @@ class Schrodinger2D:
             surf = ax.plot_surface(self.x_grid, self.y_grid, prob_density, 
                                   cmap=cmap, **plot_kwargs)
             ax.set_zlabel('Probability Density')
-            plt.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
+            cbar = plt.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
+            # No need for negative value formatting for probability density (always positive)
         elif plot_type == 'contour':
             contour = ax.contour(self.x_grid, self.y_grid, prob_density, 
                                 cmap=cmap, **plot_kwargs)
-            plt.colorbar(contour, ax=ax)
+            cbar = plt.colorbar(contour, ax=ax)
         elif plot_type == 'contourf':
             contourf = ax.contourf(self.x_grid, self.y_grid, prob_density, 
                                   cmap=cmap, **plot_kwargs)
-            plt.colorbar(contourf, ax=ax)
+            cbar = plt.colorbar(contourf, ax=ax)
         else:
             raise ValueError("plot_type must be 'surface', 'contour', or 'contourf'")
         
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
-        ax.set_title(f'Probability Density for State {n} (E = {energy:.4f})')
+        ax.set_title(f'Probability Density for State {n} ({energy_str})')
         
         return ax
     
-    def plot_eigenstates_grid(self, n_states=None, figsize=(15, 10), cmap='viridis', plot_type='contourf'):
+    def plot_eigenstates_grid(self, n_states=None, figsize=(15, 10), cmap='quantum_diverging', plot_type='contourf'):
         """
         Plot multiple eigenstates in a grid.
         
@@ -357,7 +384,7 @@ class Schrodinger2D:
         figsize : tuple, optional
             Figure size. Default is (15, 10).
         cmap : str, optional
-            Colormap to use. Default is 'viridis'.
+            Colormap to use. Default is 'quantum_diverging' for better visualization of negative values.
         plot_type : str, optional
             Type of plot ('contour' or 'contourf'). Default is 'contourf'.
             
@@ -431,6 +458,7 @@ class Schrodinger2D:
             Animation of the time evolution.
         """
         import matplotlib.animation as animation
+        from custom_mpl_style import format_negative_values, FuncFormatter
         
         # Evolve the state
         times, states_2d = self.evolve_state(initial_state_2d, t_max, n_steps)
@@ -439,11 +467,19 @@ class Schrodinger2D:
         fig, axes = plt.subplots(1, 2, figsize=figsize)
         
         # Plot the potential on the first axis
-        contourf_pot = axes[0].contourf(self.x_grid, self.y_grid, self.potential_values, cmap='viridis')
+        contourf_pot = axes[0].contourf(self.x_grid, self.y_grid, self.potential_values, cmap='quantum_diverging')
         axes[0].set_xlabel('X')
         axes[0].set_ylabel('Y')
         axes[0].set_title('Potential')
-        plt.colorbar(contourf_pot, ax=axes[0])
+        cbar_pot = plt.colorbar(contourf_pot, ax=axes[0])
+        
+        # Apply special formatting for negative values in the potential colorbar
+        cbar_pot.ax.yaxis.set_major_formatter(FuncFormatter(format_negative_values))
+        
+        # Make negative labels in colorbar bold
+        for label in cbar_pot.ax.get_yticklabels():
+            if '−' in label.get_text():  # Unicode minus sign
+                label.set_fontweight('bold')
         
         # Initialize the probability density plot on the second axis
         prob_density = np.abs(initial_state_2d)**2

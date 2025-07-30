@@ -8,8 +8,9 @@ plots that matches the Streamlit application's dark blue theme.
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.colors import LinearSegmentedColormap
-import matplotlib.cm as cm  # Ajout de cet import
+import matplotlib.cm as cm
 import numpy as np
+from matplotlib.ticker import FuncFormatter
 
 def set_mpl_theme():
     """
@@ -107,14 +108,32 @@ def set_mpl_theme():
     colors = [(0.0, blue_rgb), (0.3, purple_rgb), (0.6, teal_rgb), (0.8, amber_rgb), (1.0, cyan_rgb)]
     quantum_cmap = LinearSegmentedColormap.from_list('quantum', colors)
     
-    # Check if the colormap already exists before registering it
+    # Create a diverging colormap for better visualization of positive/negative values
+    # Use blue for negative values and amber/red for positive values
+    negative_color = '#1A237E'  # Deep blue for negative values
+    neutral_color = '#F5F5F5'   # Light color for zero
+    positive_color = '#FF5722'  # Orange-red for positive values
+    
+    # Convert hex colors to RGB tuples
+    neg_rgb = mpl.colors.to_rgb(negative_color)
+    neu_rgb = mpl.colors.to_rgb(neutral_color)
+    pos_rgb = mpl.colors.to_rgb(positive_color)
+    
+    # Create a diverging colormap
+    div_colors = [(0.0, neg_rgb), (0.5, neu_rgb), (1.0, pos_rgb)]
+    quantum_div_cmap = LinearSegmentedColormap.from_list('quantum_diverging', div_colors)
+    
+    # Check if the colormaps already exist before registering them
     if 'quantum' not in plt.colormaps():
         plt.colormaps.register(quantum_cmap)
+    
+    if 'quantum_diverging' not in plt.colormaps():
+        plt.colormaps.register(quantum_div_cmap)
     
     # Set the default colormap
     plt.set_cmap('quantum')
     
-    return style_dict, quantum_cmap
+    return style_dict, quantum_cmap, quantum_div_cmap
 
 def apply_style_to_figure(fig, ax=None):
     """
@@ -173,7 +192,31 @@ def apply_style_to_figure(fig, ax=None):
     
     return fig, ax
 
-def create_animated_colorbar(fig, ax, mappable, label=""):
+def format_negative_values(x, pos):
+    """
+    Format function for colorbar ticks that makes negative values more prominent.
+    
+    Parameters
+    ----------
+    x : float
+        The tick value
+    pos : int
+        The tick position
+        
+    Returns
+    -------
+    str
+        The formatted tick label
+    """
+    if x < 0:
+        # Use a more prominent minus sign for negative values
+        return f"−{abs(x):.2f}"  # Using Unicode minus sign (U+2212)
+    elif x == 0:
+        return "0.00"
+    else:
+        return f"{x:.2f}"
+
+def create_animated_colorbar(fig, ax, mappable, label="", format_negative=True):
     """
     Create an animated colorbar with a pulsing effect.
     
@@ -187,6 +230,8 @@ def create_animated_colorbar(fig, ax, mappable, label=""):
         The mappable to create a colorbar for
     label : str, optional
         The label for the colorbar
+    format_negative : bool, optional
+        Whether to use special formatting for negative values
         
     Returns
     -------
@@ -200,8 +245,16 @@ def create_animated_colorbar(fig, ax, mappable, label=""):
     # Style the colorbar
     cbar.ax.yaxis.set_tick_params(color='white')
     cbar.outline.set_edgecolor('white')
+    
+    # Apply special formatting for negative values if requested
+    if format_negative:
+        cbar.ax.yaxis.set_major_formatter(FuncFormatter(format_negative_values))
+    
     for label in cbar.ax.get_yticklabels():
         label.set_color('white')
+        # Make negative value labels more prominent
+        if format_negative and '-' in label.get_text():
+            label.set_fontweight('bold')
     
     return cbar
 

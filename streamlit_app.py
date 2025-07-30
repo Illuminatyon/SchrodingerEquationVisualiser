@@ -625,22 +625,20 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Use Streamlit's native LaTeX support for the equation
-st.write(t["equation_description"])
-
-# Display the equation formula separately, bold and centered
-st.markdown('<div style="text-align: center; font-weight: bold;">', unsafe_allow_html=True)
+# Display the equation description, formula, and explanation without empty spaces
+st.markdown(f"{t['equation_description']}")
+st.markdown('<div style="text-align: center; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em;">', unsafe_allow_html=True)
 st.latex(r"-\frac{\hbar^2}{2m}\nabla^2\psi + V(\mathbf{r})\psi = E\psi")
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Group the explanation text together
-st.markdown("""
-**""" + t["where"] + """:**
-- $\psi$ """ + t["wave_function"] + """
-- $\hbar$ """ + t["planck_constant"] + """
-- $m$ """ + t["particle_mass"] + """
-- $V(\mathbf{r})$ """ + t["potential"] + """
-- $E$ """ + t["energy"] + """
+# Group the explanation text together with no extra space
+st.markdown(f"""
+**{t["where"]}:**
+- $\psi$ {t["wave_function"]}
+- $\hbar$ {t["planck_constant"]}
+- $m$ {t["particle_mass"]}
+- $V(\\mathbf{{r}})$ {t["potential"]}
+- $E$ {t["energy"]}
 """)
 
 # Add Theory Section with tabs
