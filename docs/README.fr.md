@@ -42,6 +42,12 @@ Cette application interactive résout l'équation de Schrödinger indépendante 
   - Double puits (effet tunnel)
   - Potentiel de Morse (1D uniquement)
   - Puits circulaire (2D uniquement)
+- **Section théorique éducative** :
+  - Explication détaillée de l'équation de Schrödinger et ses formes
+  - Propriétés de l'équation (linéarité, unitarité, courant de probabilité)
+  - Exemples de systèmes quantiques avec solutions mathématiques
+  - Contexte historique du développement de l'équation
+  - Différentes interprétations de la mécanique quantique
 - **Interface conviviale** : Interface utilisateur basée sur Streamlit pour l'ajustement interactif des paramètres
 - **Support multilingue** : Disponible en anglais, français et espagnol
 

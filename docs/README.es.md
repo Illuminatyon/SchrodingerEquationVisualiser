@@ -42,6 +42,12 @@ Esta aplicación interactiva resuelve la ecuación de Schrödinger independiente
   - Doble pozo (efecto túnel)
   - Potencial de Morse (solo 1D)
   - Pozo circular (solo 2D)
+- **Sección teórica educativa**:
+  - Explicación detallada de la ecuación de Schrödinger y sus formas
+  - Propiedades de la ecuación (linealidad, unitariedad, corriente de probabilidad)
+  - Ejemplos de sistemas cuánticos con soluciones matemáticas
+  - Contexto histórico del desarrollo de la ecuación
+  - Diferentes interpretaciones de la mecánica cuántica
 - **Interfaz amigable**: Interfaz de usuario basada en Streamlit para ajuste interactivo de parámetros
 - **Soporte multilingüe**: Disponible en inglés, francés y español
 

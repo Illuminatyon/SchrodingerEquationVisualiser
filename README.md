@@ -44,7 +44,9 @@ Please select your preferred language to view the complete documentation:
 - Interactive visualization of wave functions, probability densities, and energy levels
 - Time evolution animation of quantum states
 - Multiple potential types (infinite well, harmonic oscillator, double well, etc.)
-- User-friendly Streamlit interface
+- Comprehensive quantum theory section with historical context and interpretations
+- Educational content about the Schrödinger equation, its properties, and applications
+- User-friendly Streamlit interface with multi-language support
 
 ## 🚀 Quick Start
 

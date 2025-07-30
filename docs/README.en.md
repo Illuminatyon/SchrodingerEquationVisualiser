@@ -42,6 +42,12 @@ This interactive application solves the time-independent Schrödinger equation a
   - Double well (tunneling effect)
   - Morse potential (1D only)
   - Circular well (2D only)
+- **Educational Theory Section**:
+  - Detailed explanation of the Schrödinger equation and its forms
+  - Properties of the equation (linearity, unitarity, probability current)
+  - Examples of quantum systems with mathematical solutions
+  - Historical context of the equation's development
+  - Different interpretations of quantum mechanics
 - **User-Friendly Interface**: Streamlit-based UI for interactive parameter adjustment
 - **Multi-language Support**: Available in English, French, and Spanish
 
