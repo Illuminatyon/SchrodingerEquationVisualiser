@@ -4,6 +4,9 @@ Streamlit app for interactive visualization of the Schrödinger equation solutio
 
 import streamlit as st
 import numpy as np
+
+# np.trapz a été renommé np.trapezoid (NumPy 2.0) puis supprimé (NumPy 2.4) : on supporte les deux.
+_trapezoid = getattr(np, "trapezoid", None) or np.trapz
 import matplotlib.pyplot as plt
 from matplotlib import animation
 import io
@@ -906,7 +909,7 @@ elif potential_name == "Harmonic Oscillator":
     if dimension == 1:
         k = st.sidebar.slider("Spring Constant", 0.1, 10.0, 1.0)
         center = st.sidebar.slider("Center", domain_min, domain_max, 0.0)
-        potential_params = {"k": k, "center": center, "mass": 1.0}
+        potential_params = {"k": k, "center": center}
     else:  # dimension == 2
         k_x = st.sidebar.slider("Spring Constant X", 0.1, 10.0, 1.0)
         k_y = st.sidebar.slider("Spring Constant Y", 0.1, 10.0, 1.0)
@@ -1132,7 +1135,7 @@ if dimension == 1:
         )
         
         # Normalize the initial state
-        norm = np.sqrt(np.trapz(np.abs(initial_state)**2, x=solver.x_grid))
+        norm = np.sqrt(_trapezoid(np.abs(initial_state)**2, x=solver.x_grid))
         initial_state = initial_state / norm
         
         with st.spinner("Creating animation..."):

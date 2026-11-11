@@ -7,6 +7,9 @@ in 1D and 2D with various potentials.
 
 import argparse
 import numpy as np
+
+# np.trapz a été renommé np.trapezoid (NumPy 2.0) puis supprimé (NumPy 2.4) : on supporte les deux.
+_trapezoid = getattr(np, "trapezoid", None) or np.trapz
 import matplotlib.pyplot as plt
 
 from schrodinger_solver import potentials
@@ -139,7 +142,7 @@ def solve_1d(args):
         initial_state = create_gaussian_wave_packet(solver.x_grid, center, width, k0)
         
         # Normalize the initial state
-        norm = np.sqrt(np.trapz(np.abs(initial_state)**2, x=solver.x_grid))
+        norm = np.sqrt(_trapezoid(np.abs(initial_state)**2, x=solver.x_grid))
         initial_state = initial_state / norm
         
         # Create the animation
