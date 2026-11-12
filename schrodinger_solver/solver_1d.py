@@ -6,6 +6,9 @@ building on the core functions and potential implementations.
 """
 
 import numpy as np
+
+# np.trapz a été renommé np.trapezoid (NumPy 2.0) puis supprimé (NumPy 2.4) : on supporte les deux.
+_trapezoid = getattr(np, "trapezoid", None) or np.trapz
 from scipy import sparse
 import matplotlib.pyplot as plt
 
@@ -119,7 +122,7 @@ class Schrodinger1D:
         psi = self.eigenvectors[:, n]
         
         # Normalize the eigenfunction
-        norm = np.sqrt(np.trapz(np.abs(psi)**2, x=self.x_grid))
+        norm = np.sqrt(_trapezoid(np.abs(psi)**2, x=self.x_grid))
         psi = psi / norm
         
         return psi
